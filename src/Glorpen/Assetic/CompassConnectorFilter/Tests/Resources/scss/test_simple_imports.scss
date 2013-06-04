@@ -1,0 +1,6 @@
+@import "@scss/css1"; //include
+
+@import "style.css"; //relative as-is
+@import "/style.css"; //absolute as-is
+//@import "@css/style.css" //resolve app url, waiting for upstream
+

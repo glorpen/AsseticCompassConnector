@@ -1,0 +1,5 @@
+@import "@sprites/something/*.png";
+@include something-sprites(red);
+
+@import "vendor-something/*.png";
+@include vendor-something-sprites(red);

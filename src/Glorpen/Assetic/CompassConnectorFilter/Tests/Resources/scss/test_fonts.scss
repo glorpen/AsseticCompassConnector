@@ -1,0 +1,20 @@
+@import "compass/css3/font-face";
+
+font-face-vendor {
+    @include font-face("this name", font-files("this.woff", woff, "this.otf", opentype), "this.eot");
+}
+
+font-face-app {
+    @include font-face("this name", font-files("@fonts/this.woff", woff, "@fonts/this.otf", opentype), "@fonts/this.eot");
+}
+font-face-absolute {
+  @include font-face("this name", font-files("/this.woff", woff, "/this.otf", opentype), "/this.eot");
+}
+
+font-inline-vendor {
+	vendor-inline-font: inline-font-files("vendor_empty.ttf", "truetype");
+}
+
+font-inline-app {
+  app-inline-font: inline-font-files("@fonts/empty.ttf", "truetype");
+}

@@ -1,0 +1,9 @@
+syntax: regexp
+^\.settings$
+^\.project$
+^\.buildpath$
+^\.sass-cache$
+^composer\.(lock|phar)$
+^vendor$
+^src/Glorpen/Assetic/CompassConnectorFilter/Tests/Resources/out/generated-images/sprites$
+^src/Glorpen/Assetic/CompassConnectorFilter/Tests/Resources/out/generated-images/vendor-something-.*$
