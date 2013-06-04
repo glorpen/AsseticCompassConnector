@@ -8,6 +8,9 @@ use Assetic\Asset\FileAsset;
 use Assetic\Asset\GlobAsset;
 
 class SimpleResolver implements ResolverInterface {
+
+	protected $appPrefix = '/the-app';
+	protected $vendorPrefix = '/vendor'; //TODO: przenieść do pythonowego exampla
 	
 	protected $vendorFontsDir = 'fonts';
 	protected $vendorImagesDir = 'images';
@@ -21,6 +24,13 @@ class SimpleResolver implements ResolverInterface {
 	public function __construct($sourceDir, $outputDir){
 		$this->sourceDir = $sourceDir;
 		$this->outputDir = $outputDir;
+	}
+	
+	public function setAppPrefix($prefix){
+		$this->appPrefix = $prefix;
+	}
+	public function setVendorPrefix($prefix){
+		$this->vendorPrefix = $prefix;
 	}
 	
 	public function listVPaths($vpath, $isVendor){
@@ -47,9 +57,9 @@ class SimpleResolver implements ResolverInterface {
 	
 	public function getUrl($vpath, $isVendor, $type){
 		if($isVendor){
-			$path = "vendor/".$this->{"vendor".ucfirst($type)."sDir"}."/";
+			$path = $this->vendorPrefix."/".$this->{"vendor".ucfirst($type)."sDir"}."/";
 		} else {
-			$path = "the-app/".($type == "generated_image"?$this->generatedDir."/":"");
+			$path = $this->appPrefix."/".($type == "generated_image"?$this->generatedDir."/":"");
 		}
 		return "/{$path}{$vpath}";
 	}
