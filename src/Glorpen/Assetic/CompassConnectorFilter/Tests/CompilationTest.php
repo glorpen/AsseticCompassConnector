@@ -12,19 +12,6 @@ use Assetic\Asset\StringAsset;
 use Assetic\Asset\AssetCollection;
 
 class CompassProcess extends \PHPUnit_Framework_TestCase {
-	public function testString(){
-		
-		$resolver = new SimpleResolver('', '');
-		
-		$css = new AssetCollection(array(
-				new StringAsset('asd { color:red; }'),
-		), array(
-				new Filter($resolver, '/home/arkus/.gem/ruby/1.9.1/bin/compass')
-		));
-		
-		$this->assertContains('color: red', $css->dump());
-	}
-	
 	protected function getAssetCollection($filename){
 
 		$resolver = new SimpleResolver(
@@ -35,7 +22,7 @@ class CompassProcess extends \PHPUnit_Framework_TestCase {
 		$css = new AssetCollection(array(
 				new FileAsset(implode(DIRECTORY_SEPARATOR, array(__DIR__,'Resources','scss',$filename))),
 		), array(
-				new Filter($resolver, '/home/arkus/.gem/ruby/1.9.1/bin/compass')
+				new Filter($resolver, __DIR__.DIRECTORY_SEPARATOR.'cache', '/home/arkus/.gem/ruby/1.9.1/bin/compass')
 		));
 		return $css;
 	}

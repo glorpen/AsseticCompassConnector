@@ -15,12 +15,13 @@ class Filter extends BaseProcessFilter implements DependencyExtractorInterface {
 	
 	const INITIAL_VFILE = 'php::stdin.';
 	
-	protected $resolver, $compassPath, $rubyPath;
+	protected $resolver, $compassPath, $rubyPath, $cacheDir;
 	
-	public function __construct(ResolverInterface $resolver, $compassPath = '/usr/bin/compass', $rubyPath = null) {
+	public function __construct(ResolverInterface $resolver, $cacheDir = null, $compassPath = '/usr/bin/compass', $rubyPath = null) {
 		$this->compassPath = $compassPath;
 		$this->rubyPath = $rubyPath;
 		$this->resolver = $resolver;
+		$this->cacheDir = $cacheDir;
 	
 		if ('cli' !== php_sapi_name()) {
 			$this->boring = true;
@@ -45,6 +46,10 @@ class Filter extends BaseProcessFilter implements DependencyExtractorInterface {
 		
 		$pb = $this->createProcessBuilder($compassProcessArgs);
 		
+		if($this->cacheDir){
+			$pb->setWorkingDirectory($this->cacheDir);
+		}
+		
 		$pb->setInput($asset->getContent());
 		
 		$compassProc = CompassProcess::fromProcess($pb->getProcess(), $this->resolver);
@@ -55,7 +60,8 @@ class Filter extends BaseProcessFilter implements DependencyExtractorInterface {
 	}
 	
 	public function getChildren(AssetFactory $factory, $content, $loadPath = null){
-		
+		//TODO
+		//var_dump("get children");
 	}
 	
 }

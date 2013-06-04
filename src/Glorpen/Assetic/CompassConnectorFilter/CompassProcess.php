@@ -218,6 +218,7 @@ class CompassProcess {
 	
 		$commandline = $this->commandline;
 	
+		@mkdir($this->cwd, 0755, true);
 		$this->process = proc_open($commandline, $descriptors, $this->pipes, $this->cwd, $this->env, array());
 	
 		if (!is_resource($this->process)) {
