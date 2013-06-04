@@ -11,6 +11,7 @@ class SimpleResolver implements ResolverInterface {
 
 	protected $appPrefix = '/the-app';
 	protected $vendorPrefix = '/vendor'; //TODO: przenieść do pythonowego exampla
+	protected $generatedPrefix = '/generated';
 	
 	protected $vendorFontsDir = 'fonts';
 	protected $vendorImagesDir = 'images';
@@ -23,7 +24,7 @@ class SimpleResolver implements ResolverInterface {
 	
 	public function __construct($sourceDir, $outputDir){
 		$this->sourceDir = $sourceDir;
-		$this->outputDir = $outputDir;
+		$this->outputDir = realpath($outputDir);
 	}
 	
 	public function setAppPrefix($prefix){
@@ -56,12 +57,16 @@ class SimpleResolver implements ResolverInterface {
 	}
 	
 	public function getUrl($vpath, $isVendor, $type){
-		if($isVendor){
-			$path = $this->vendorPrefix."/".$this->{"vendor".ucfirst($type)."sDir"}."/";
+		if($type == "generated_image"){
+			$path = $this->generatedPrefix."/";
 		} else {
-			$path = $this->appPrefix."/".($type == "generated_image"?$this->generatedDir."/":"");
+			if($isVendor){
+				$path = $this->vendorPrefix."/".$this->{"vendor".ucfirst($type)."sDir"}."/";
+			} else {
+				$path = $this->appPrefix."/";
+			}
 		}
-		return "/{$path}{$vpath}";
+		return "{$path}{$vpath}";
 	}
 	
 	public function getFilePath($vpath, $isVendor, $type){
@@ -76,7 +81,7 @@ class SimpleResolver implements ResolverInterface {
 		return implode(DIRECTORY_SEPARATOR, $parts);
 	}
 	
-	public function getOutFilePath($vpath, $type){
+	public function getOutFilePath($vpath, $type, $isVendor){
 		$parts = array($this->outputDir);
 		if($type == 'generated_image'){
 			$parts[] = $this->generatedDir;

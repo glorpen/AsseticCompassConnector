@@ -35,6 +35,7 @@ class Filter extends BaseProcessFilter implements DependencyExtractorInterface {
 		$compassProcessArgs = array(
 				$this->compassPath,
 				'compile',
+				'--trace',
 				'-r', 'compass-connector',
 				'@'.static::INITIAL_VFILE.'scss',
 		);

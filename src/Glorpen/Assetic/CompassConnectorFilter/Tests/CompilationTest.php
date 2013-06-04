@@ -71,17 +71,17 @@ class CompassProcess extends \PHPUnit_Framework_TestCase {
 		$this->assertContains('width-app: 10px;', $out);
 		$this->assertContains('width-vendor: 10px;', $out);
 		$this->assertContains("image-inline: url('data:image/png;base64,", $out);
-		$this->assertContains("vendor-generated-image-busted: url('/the-app/generated-images/1x1.png?1365281369'", $out);
-		$this->assertContains("vendor-generated-image: url('/the-app/generated-images/1x1.png'", $out);
-		$this->assertContains("generated-image-busted: url('/the-app/generated-images/1x1.png?1365281369'", $out);
-		$this->assertContains("generated-image: url('/the-app/generated-images/1x1.png'", $out);
+		$this->assertContains("vendor-generated-image-busted: url('/generated/1x1.png?1365281369'", $out);
+		$this->assertContains("vendor-generated-image: url('/generated/1x1.png'", $out);
+		$this->assertContains("generated-image-busted: url('/generated/1x1.png?1365281369'", $out);
+		$this->assertContains("generated-image: url('/generated/1x1.png'", $out);
 	}
 	
 	public function testSprites(){
 		$css = $this->getAssetCollection('test_sprites.scss');
 		$out = $css->dump();
 		
-		$this->assertContains('/the-app/generated-images/sprites/something-sb55c0df6d7.png', $out);
-		$this->assertContains('/the-app/generated-images/vendor-something-s51c948a8c3.png', $out);
+		$this->assertContains('/generated/sprites/something-sb55c0df6d7.png', $out);
+		$this->assertContains('/generated/vendor-something-s51c948a8c3.png', $out);
 	}
 }

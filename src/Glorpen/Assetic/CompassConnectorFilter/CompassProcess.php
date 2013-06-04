@@ -68,13 +68,20 @@ class CompassProcess {
 					"hash" => md5($vpath),
 					"ext" => 'scss'
 			);
+		} elseif ($vpath == Filter::INITIAL_VFILE.'css'){
+			return array(
+					"mtime" => time(),
+					"data" => base64_encode($this->output),
+					"hash" => md5($vpath),
+					"ext" => 'css'
+			);
 		}
 		
 		$vpath = ltrim($vpath,'/');
 		switch($type){
 			case 'generated_image':
 			case 'out_css':
-				$f = $this->resolver->getOutFilePath($vpath, $type);
+				$f = $this->resolver->getOutFilePath($vpath, $type, $mode=='vendor');
 				break;
 			default:
 				$f = $this->resolver->getFilePath($vpath, $mode == 'vendor', $type);
@@ -90,18 +97,20 @@ class CompassProcess {
 	 * @throws \RuntimeException
 	 * @return boolean
 	 */
-	protected function putFile($vpath, $type, $data){
+	protected function putFile($vpath, $type, $data, $mode){
 		
 		if($vpath == Filter::INITIAL_VFILE.'css'){
 			$this->output = base64_decode($data);
 			return true;
 		}
 		
+		$isVendor = $mode == 'vendor';
+		
 		$vpath = ltrim($vpath,'/');
 		switch($type){
 			case 'generated_image':
 			case 'out_css':
-				$p = $this->resolver->getOutFilePath($vpath, $type);
+				$p = $this->resolver->getOutFilePath($vpath, $type, $isVendor);
 				break;
 			default:
 				throw new \RuntimeException();
@@ -119,7 +128,7 @@ class CompassProcess {
 	 * @param string $mode
 	 */
 	protected function getUrl($path, $type, $mode){
-		return $this->resolver->getUrl($path, $mode == 'vendor', $type);
+		return preg_replace('#/+#','/', $this->resolver->getUrl($path, $mode == 'vendor', $type));
 	}
 	
 	/**
@@ -150,8 +159,10 @@ class CompassProcess {
 			$asset->load();
 		}
 		
+		if(!$asset) return null;
+		
 		if(!$asset instanceof BaseAsset){
-			throw new \Exception();
+			throw new \Exception('asset should be instance of BaseAsset');
 		}
 		
 		return array(
