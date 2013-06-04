@@ -20,9 +20,6 @@
     "require-dev": {
         "phpunit/phpunit": "*"
     },
-    "suggest": {
-        "glorpen/styleembedder": "Embeds styles into HTML DOM"
-    },
     "autoload": {
         "psr-0": { "Glorpen\\Assetic\\CompassConnectorFilter": "src/" }
     }
