@@ -22,6 +22,6 @@
     },
     "target-dir": "Glorpen/Assetic/CompassConnectorFilter",
     "autoload": {
-        "psr-0": { "Glorpen\\Assetic\\CompassConnectorFilter": "src/" }
+        "psr-0": { "Glorpen\\Assetic\\CompassConnectorFilter": "" }
     }
 }
