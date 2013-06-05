@@ -2,10 +2,10 @@
     "name": "glorpen/assetic-compass-connector",
     "minimum-stability": "dev",
     "description": "Assetic Compass filter",
-    "keywords": [ "assets", "compass", "assetic" ],
+    "keywords": [ "assets", "compass", "assetic", "scss" ],
     "homepage": "https://bitbucket.org/glorpen/asseticcompassconnector",
     "type": "library",
-    "license": "GPLv3",
+    "license": "GPL-3.0",
     "authors": [
         {
             "name": "Arkadiusz Dzięgiel",
