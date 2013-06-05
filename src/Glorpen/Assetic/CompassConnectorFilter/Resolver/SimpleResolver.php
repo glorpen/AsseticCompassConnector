@@ -19,6 +19,7 @@ class SimpleResolver implements ResolverInterface {
 	protected $generatedDir = 'generated-images';
 	
 	protected $assetsDir = 'assets';
+	protected $vendorDir = 'vendor';
 	
 	protected $sourceDir, $outputDir;
 	
@@ -33,10 +34,13 @@ class SimpleResolver implements ResolverInterface {
 	public function setVendorPrefix($prefix){
 		$this->vendorPrefix = $prefix;
 	}
+	public function setVendorDir($dir){
+		$this->vendorDir = $dir;
+	}
 	
 	public function listVPaths($vpath, $isVendor){
 		if($isVendor){
-			$parts = array($this->sourceDir, "vendors", $this->vendorImagesDir);
+			$parts = array($this->sourceDir, $this->vendorDir, $this->vendorImagesDir);
 		} else {
 			$parts = array($this->sourceDir, $this->assetsDir);
 		}
@@ -71,7 +75,7 @@ class SimpleResolver implements ResolverInterface {
 	
 	public function getFilePath($vpath, $isVendor, $type){
 		if($isVendor){
-			$parts = array("vendors", $this->{"vendor".ucfirst($type)."sDir"});
+			$parts = array($this->vendorDir, $this->{"vendor".ucfirst($type)."sDir"});
 		} else {
 			$parts = $type == 'scss'?array():array($this->assetsDir);
 		}
