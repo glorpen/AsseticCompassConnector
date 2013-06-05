@@ -18,6 +18,7 @@ class CompassProcess {
 	protected $cwd, $env, $commandline;
 	
 	protected $apiMethods, $resolver;
+	private $touchedFiles;
 	
 	public function __construct($cmd, ResolverInterface $resolver, $cwd, array $env = null, $input = null){
 		$this->initialInput = $input;
@@ -35,6 +36,10 @@ class CompassProcess {
 			$p->getEnv(),
 			$p->getStdin()
 		);
+	}
+	
+	public function getTouchedFiles(){
+		return $this->touchedFiles;
 	}
 	
 	/**
@@ -165,6 +170,8 @@ class CompassProcess {
 			throw new \Exception('asset should be instance of BaseAsset');
 		}
 		
+		$this->touchedFiles[$asset->getSourceRoot().DIRECTORY_SEPARATOR.$asset->getSourcePath()] = $asset;
+		
 		return array(
 			"mtime" => $asset->getLastModified(),
 			"data" => base64_encode($asset->getContent()),
@@ -208,6 +215,7 @@ class CompassProcess {
 	
 	public function run()
 	{
+		$this->touchedFiles = array();
 		$this->starttime = microtime(true);
 		
 		$descriptors = array(
@@ -219,6 +227,7 @@ class CompassProcess {
 		$commandline = $this->commandline;
 	
 		@mkdir($this->cwd, 0755, true);
+		//var_dump($commandline);
 		$this->process = proc_open($commandline, $descriptors, $this->pipes, $this->cwd, $this->env, array());
 	
 		if (!is_resource($this->process)) {
@@ -228,8 +237,10 @@ class CompassProcess {
 		foreach ($this->pipes as $pipe) {
 			stream_set_blocking($pipe, true); //we want it to block
 		}
+		//stream_set_blocking($this->pipes[2], false);
 
 		while(($line=fgets($this->pipes[1]))!==False){
+			//echo fgets($this->pipes[2]);
 			if(preg_match('/^(\x1b\x5b[0-9]{1,2}m?)?({.*)$/S', $line, $matches)==1){
 				$line = $matches[2];
 				$ret = $this->apiRequest(json_decode($line, true));
