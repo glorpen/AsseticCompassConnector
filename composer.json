@@ -20,6 +20,7 @@
     "require-dev": {
         "phpunit/phpunit": "*"
     },
+    "target-dir": "Glorpen/Assetic/CompassConnectorFilter",
     "autoload": {
         "psr-0": { "Glorpen\\Assetic\\CompassConnectorFilter": "src/" }
     }

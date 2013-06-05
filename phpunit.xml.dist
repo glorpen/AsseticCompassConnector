@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit bootstrap="./vendor/autoload.php">
+<phpunit bootstrap="./src/Tests/bootstrap.php">
   <testsuites>
     <testsuite name="GlorpenAsseticCompassConnector Test Suite">
-      <directory suffix="Test.php">src/Glorpen/Assetic/CompassConnectorFilter/Tests</directory>
+      <directory suffix="Test.php">src/Tests</directory>
     </testsuite>
   </testsuites>
   <filter>
