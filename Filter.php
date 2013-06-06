@@ -1,6 +1,8 @@
 <?php
 namespace Glorpen\Assetic\CompassConnectorFilter;
 
+use Assetic\Filter\HashableInterface;
+
 use Assetic\Asset\FileAsset;
 
 use Glorpen\Assetic\CompassConnectorFilter\Resolver\ResolverInterface;
@@ -13,7 +15,7 @@ use Assetic\Filter\DependencyExtractorInterface;
 
 use Assetic\Filter\BaseProcessFilter;
 
-class Filter extends BaseProcessFilter implements DependencyExtractorInterface {
+class Filter extends BaseProcessFilter implements DependencyExtractorInterface, HashableInterface {
 	
 	const INITIAL_VFILE = 'php::stdin.';
 	
@@ -21,6 +23,7 @@ class Filter extends BaseProcessFilter implements DependencyExtractorInterface {
 	protected $plugins = array();
 	
 	private $children = null;
+	private $hashable=array();
 	
 	public function __construct(ResolverInterface $resolver, $cacheDir = '/tmp/compass-connector', $compassPath = '/usr/bin/compass', $rubyPath = null) {
 		$this->compassPath = $compassPath;
@@ -73,6 +76,7 @@ class Filter extends BaseProcessFilter implements DependencyExtractorInterface {
 		$asset->setContent($compassProc->getOutput());
 	}
 	
+	
 	private function loadCachedChildren($hash){
 		$this->children = array();
 		$cache = $this->cacheChildrenFile.'.'.$hash;
@@ -86,14 +90,33 @@ class Filter extends BaseProcessFilter implements DependencyExtractorInterface {
 	}
 	
 	public function getChildren(AssetFactory $factory, $content, $loadPath = null){
+		$hash = md5($content);
+		
+		//Deep assets are not working for now...
 		if($this->children === null){
-			$this->loadCachedChildren(md5($content));
+			$this->loadCachedChildren($hash);
 		}
+		
+		$cache = $this->cacheChildrenFile.'.'.$hash;
+		$mtime = 0;
+		if(file_exists($cache))
+			foreach(include($cache) as $f){
+			if(file_exists($f)){
+				$mtime = max($mtime, filemtime($f));
+			}
+		}
+		$this->hashable=array($hash, $mtime);
+		
 		return $this->children;
 	}
 	
 	public function setPlugins(array $plugins){
 		$this->plugins = $plugins;
+	}
+	
+	public function hash(){
+		// since hash changes when mtime already changes for parent file
+		return get_class($this).implode('!@#', $this->hashable);
 	}
 	
 }
