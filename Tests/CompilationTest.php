@@ -11,7 +11,7 @@ use Assetic\Asset\StringAsset;
 
 use Assetic\Asset\AssetCollection;
 
-class CompassProcess extends \PHPUnit_Framework_TestCase {
+class CompilationTest extends \PHPUnit_Framework_TestCase {
 	protected function getAssetCollection($filename){
 
 		$resolver = new SimpleResolver(

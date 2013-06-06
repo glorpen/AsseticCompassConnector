@@ -133,7 +133,7 @@ class CompassProcess {
 	 * @param string $mode
 	 */
 	protected function getUrl($path, $type, $mode){
-		return preg_replace('#/+#','/', $this->resolver->getUrl($path, $mode == 'vendor', $type));
+		return preg_replace('#((^/)|(^[a-zA-Z0-9_]+:/))?/+#','$1/', $this->resolver->getUrl($path, $mode == 'vendor', $type));
 	}
 	
 	/**
