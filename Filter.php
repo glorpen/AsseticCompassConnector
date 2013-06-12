@@ -47,17 +47,10 @@ class Filter extends BaseProcessFilter implements DependencyExtractorInterface, 
 				$this->compassPath,
 				'compile',
 				'--trace',
+				'-r', 'compass-connector',
+				'@'.static::INITIAL_VFILE.'scss'
 		);
 		
-		foreach($this->plugins as $p){
-			$compassProcessArgs[] = '-r';
-			$compassProcessArgs[] = $p;
-		}
-		
-		$compassProcessArgs[] = '-r';
-		$compassProcessArgs[] = 'compass-connector';
-		
-		$compassProcessArgs[] = '@'.static::INITIAL_VFILE.'scss';
 		if (null !== $this->rubyPath) {
 			$compassProcessArgs = array_merge(explode(' ', $this->rubyPath), $compassProcessArgs);
 		}
@@ -67,6 +60,7 @@ class Filter extends BaseProcessFilter implements DependencyExtractorInterface, 
 		$pb->setInput($asset->getContent());
 		
 		$compassProc = CompassProcess::fromProcess($pb->getProcess(), $this->resolver);
+		$compassProc->setPlugins($this->plugins);
 		$compassProc->run();
 		
 		$this->children = $compassProc->getTouchedFiles();

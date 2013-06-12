@@ -12,17 +12,20 @@ use Assetic\Asset\StringAsset;
 use Assetic\Asset\AssetCollection;
 
 class CompilationTest extends \PHPUnit_Framework_TestCase {
-	protected function getAssetCollection($filename){
+	protected function getAssetCollection($filename, array $plugins = array()){
 
 		$resolver = new SimpleResolver(
 				implode(DIRECTORY_SEPARATOR,array(__DIR__,'Resources')),
 				implode(DIRECTORY_SEPARATOR,array(__DIR__,'Resources','out'))
 		);
 		
+		$f = new Filter($resolver, __DIR__.DIRECTORY_SEPARATOR.'cache', '/home/arkus/.gem/ruby/1.9.1/bin/compass');
+		$f->setPlugins($plugins);
+		
 		$css = new AssetCollection(array(
 				new FileAsset(implode(DIRECTORY_SEPARATOR, array(__DIR__,'Resources','scss',$filename))),
 		), array(
-				new Filter($resolver, __DIR__.DIRECTORY_SEPARATOR.'cache', '/home/arkus/.gem/ruby/1.9.1/bin/compass')
+				$f
 		));
 		return $css;
 	}
@@ -70,5 +73,13 @@ class CompilationTest extends \PHPUnit_Framework_TestCase {
 		
 		$this->assertContains('/generated/sprites/something-sb55c0df6d7.png', $out);
 		$this->assertContains('/generated/vendor-something-s51c948a8c3.png', $out);
+	}
+	
+	public function testPluginsRequiring(){
+		$css = $this->getAssetCollection('test_zurb.scss', array('zurb-foundation'));
+		$this->assertContains('body', $css->dump(), 'Plugin without version');
+		
+		$css = $this->getAssetCollection('test_zurb.scss', array('zurb-foundation'=>'>0'));
+		$this->assertContains('body', $css->dump(), 'Plugin with version');
 	}
 }

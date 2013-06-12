@@ -17,7 +17,7 @@ class CompassProcess {
 	protected $initialInput = null, $output;
 	protected $cwd, $env, $commandline;
 	
-	protected $apiMethods, $resolver;
+	protected $apiMethods, $resolver, $plugins;
 	private $touchedFiles;
 	
 	public function __construct($cmd, ResolverInterface $resolver, $cwd, array $env = null, $input = null){
@@ -38,6 +38,10 @@ class CompassProcess {
 		);
 	}
 	
+	public function setPlugins(array $plugins){
+		$this->plugins = $plugins;
+	}
+	
 	public function getTouchedFiles(){
 		return $this->touchedFiles;
 	}
@@ -55,6 +59,7 @@ class CompassProcess {
 			"generated_images_path" => "/",
 			"css_path" => "/dev/null",
 			"sass_path" => "/dev/null",
+			"plugins" => $this->plugins
 		);
 	}
 	
@@ -141,7 +146,7 @@ class CompassProcess {
 	 * @return number
 	 */
 	protected function getApiVersion(){
-		return 1;
+		return 2;
 	}
 	
 	/**
