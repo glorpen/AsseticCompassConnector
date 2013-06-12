@@ -5,9 +5,6 @@ use Glorpen\Assetic\CompassConnectorFilter\CompassProcess;
 
 class FilterTest extends \PHPUnit_Framework_TestCase {
 
-	/**
-	 * @group asd
-	 */
 	public function testUrlNormalization(){
 		//$resolver = $this->
 		$resolver = $this->getMock('Glorpen\Assetic\CompassConnectorFilter\Resolver\ResolverInterface');

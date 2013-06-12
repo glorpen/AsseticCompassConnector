@@ -81,5 +81,8 @@ class CompilationTest extends \PHPUnit_Framework_TestCase {
 		
 		$css = $this->getAssetCollection('test_zurb.scss', array('zurb-foundation'=>'>0'));
 		$this->assertContains('body', $css->dump(), 'Plugin with version');
+		
+		$css = $this->getAssetCollection('test_zurb.scss', array('zurb-foundation'=>'>999'));
+		$this->assertNotContains('body', $css->dump(), 'Plugin with non existing version');
 	}
 }
