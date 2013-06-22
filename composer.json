@@ -1,6 +1,5 @@
 {
     "name": "glorpen/assetic-compass-connector",
-    "minimum-stability": "dev",
     "description": "Assetic Compass filter",
     "keywords": [ "assets", "compass", "assetic", "scss" ],
     "homepage": "https://bitbucket.org/glorpen/asseticcompassconnector",

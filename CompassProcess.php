@@ -1,6 +1,8 @@
 <?php
 namespace Glorpen\Assetic\CompassConnectorFilter;
 
+use Assetic\Exception\FilterException;
+
 use Assetic\Asset\BaseAsset;
 
 use Assetic\Asset\FileAsset;
@@ -14,11 +16,13 @@ use Symfony\Component\Process\Exception\RuntimeException;
 
 class CompassProcess {
 	
-	protected $initialInput = null, $output;
+	protected $initialInput = null, $output = null;
 	protected $cwd, $env, $commandline;
 	
 	protected $apiMethods, $resolver, $plugins;
 	private $touchedFiles;
+	
+	protected $errorOutput, $commandOutput, $apiRequests, $exitStatus;
 	
 	public function __construct($cmd, ResolverInterface $resolver, $cwd, array $env = null, $input = null){
 		$this->initialInput = $input;
@@ -185,6 +189,16 @@ class CompassProcess {
 		);
 	}
 	
+	private function exportToLine($o){
+		$ret = str_replace("\n","",var_export($o, true));
+		$max = 200;
+		if(strlen($ret)>$max){
+			$ret = substr($ret,0,$max-3).'...';
+		}
+		
+		return $ret;
+	}
+	
 	protected function apiRequest(array $request){
 		$methods = $this->getApiMethods();
 		
@@ -193,9 +207,10 @@ class CompassProcess {
 			throw new InvalidArgumentException("Api method ".$requestedMethod.' was not found');
 		}
 		
-		//var_dump($request);
+		//output in/out api requests
+		$this->apiRequests.="{$request['method']}: ".$this->exportToLine($request['args'])."\n";
 		$ret = call_user_func_array(array($this, $methods[$requestedMethod]), $request['args']);
-		//var_dump($ret);
+		$this->apiRequests.="response: ".$this->exportToLine($ret)."\n";
 		
 		return $ret;
 	}
@@ -221,38 +236,82 @@ class CompassProcess {
 	public function run()
 	{
 		$this->touchedFiles = array();
-		$this->starttime = microtime(true);
 		
 		$descriptors = array(
              array('pipe', 'r'), // stdin
              array('pipe', 'w'), // stdout
-             //array('pipe', 'w'), // stderr
+             array('pipe', 'w'), // stderr
          );
 	
 		$commandline = $this->commandline;
 	
 		@mkdir($this->cwd, 0755, true);
-		//var_dump($commandline);
-		$this->process = proc_open($commandline, $descriptors, $this->pipes, $this->cwd, $this->env, array());
+		$this->process = proc_open($commandline, $descriptors, $pipes, $this->cwd, $this->env, array());
 	
 		if (!is_resource($this->process)) {
 			throw new RuntimeException('Unable to launch a new process.');
 		}
 	
-		foreach ($this->pipes as $pipe) {
-			stream_set_blocking($pipe, true); //we want it to block
-		}
-		//stream_set_blocking($this->pipes[2], false);
-
-		while(($line=fgets($this->pipes[1]))!==False){
-			//echo fgets($this->pipes[2]);
-			if(preg_match('/^(\x1b\x5b[0-9]{1,2}m?)?({.*)$/S', $line, $matches)==1){
-				$line = $matches[2];
-				$ret = $this->apiRequest(json_decode($line, true));
-				fwrite($this->pipes[0], json_encode($ret)."\n");
-			} else {
-				//echo $line;
+		stream_set_blocking($pipes[0], true);
+		stream_set_blocking($pipes[1], false);
+		stream_set_blocking($pipes[2], false);
+		
+		$readPipes = array($pipes[1], $pipes[2]);
+		$buffor = array('','');
+		
+		while(True){
+			$r = $readPipes;
+			$w = null;
+			$e = null;
+			
+			$n = @stream_select($r, $w, $e, 3);
+			
+			if (false === $n) break;
+			if ($n === 0) {
+				proc_terminate($this->process);
+				throw new RuntimeException('The process timed out.');
 			}
+			
+			foreach ($r as $pipe) {
+				$type = array_search($pipe, $readPipes);
+				$data = fgets($pipe);
+				
+				if (false === $data || feof($pipe)) {
+					fclose($pipe);
+					unset($readPipes[$type]);
+					continue;
+				}
+				
+				if($data[strlen($data)-1]!="\n"){
+					$buffor[$type].=$data;
+					continue;
+				} else {
+					$data = $buffor[$type].$data;
+				}
+				
+				if($type === 1){
+					$this->errorOutput.=$data;
+				} else {
+					if(preg_match('/^(\x1b\x5b[0-9]{1,2}m?)?({.*)$/S', $data, $matches)==1){
+						$line = $matches[2];
+						$ret = $this->apiRequest(json_decode($line, true));
+						$written = fwrite($pipes[0], json_encode($ret)."\n");
+					} else {
+						$this->commandOutput.=$data;
+					}
+				}
+			}
+		}
+		
+		$info = proc_get_status($this->process);
+		if (!$info['running']) {
+			$exitcode = $info['exitcode'];
+			
+			if($exitcode != 0){
+				throw new FilterException("Process exited with {$exitcode}\nOutput:\n{$this->commandOutput}\nError output:\n{$this->errorOutput}\nApi requests:\n{$this->apiRequests}");
+			}
+		} else {
+			throw new RuntimeException("Process was still running");
 		}
 	}
 }
