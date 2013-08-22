@@ -51,11 +51,12 @@ How to install
 Virtual Paths
 =============
 
-There are three kind of "paths":
+There are four kinds of "paths":
 
 - app: looks like ``@MyBundle:public/images/asset.png``
+- absolute path: starts with single ``/``, should only be used in resolving on-disk file and url prefixing, it is always a public file
 - vendor: a relative path, should be used only by compass plugins (eg. zurb-foundation, blueprint)
-- absolute path: starts with ``/``, ``http://`` etc. and will NOT be changed by connector
+- absolute path: starts with ``//``, ``http://`` etc. and will NOT be changed by connector
 
 Some examples:
 
