@@ -97,7 +97,8 @@ class SimpleResolver implements ResolverInterface {
 		return implode(DIRECTORY_SEPARATOR, $parts);
 	}
 	
-	public function getOutFilePath($vpath, $type, $isVendor){
+	public function getOutFilePath($vpath, $type, $mode){
+		$isVendor = $mode == CompassProcess::MODE_VENDOR;
 		$parts = array($this->outputDir);
 		if($type == 'generated_image'){
 			$parts[] = $this->generatedDir;

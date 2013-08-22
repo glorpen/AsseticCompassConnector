@@ -105,7 +105,7 @@ class CompassProcess {
 		switch($type){
 			case 'generated_image':
 			case 'out_css':
-				$f = $this->resolver->getOutFilePath($vpath, $type, $mode==self::MODE_VENDOR);
+				$f = $this->resolver->getOutFilePath($vpath, $type, $mode);
 				break;
 			default:
 				$f = $this->resolver->getFilePath($vpath, $mode, $type);
@@ -134,7 +134,7 @@ class CompassProcess {
 		switch($type){
 			case 'generated_image':
 			case 'out_css':
-				$p = $this->resolver->getOutFilePath($vpath, $type, $isVendor);
+				$p = $this->resolver->getOutFilePath($vpath, $type, $mode);
 				break;
 			default:
 				throw new \RuntimeException();
