@@ -24,6 +24,10 @@ class CompassProcess {
 	
 	protected $errorOutput, $commandOutput, $apiRequests, $exitStatus;
 	
+	const MODE_VENDOR = 'vendor';
+	const MODE_APP = 'app';
+	const MODE_ABSOLUTE = 'absolute';
+	
 	public function __construct($cmd, ResolverInterface $resolver, $cwd, array $env = null, $input = null){
 		$this->initialInput = $input;
 		$this->cwd = $cwd;
@@ -95,10 +99,10 @@ class CompassProcess {
 		switch($type){
 			case 'generated_image':
 			case 'out_css':
-				$f = $this->resolver->getOutFilePath($vpath, $type, $mode=='vendor');
+				$f = $this->resolver->getOutFilePath($vpath, $type, $mode==self::MODE_VENDOR);
 				break;
 			default:
-				$f = $this->resolver->getFilePath($vpath, $mode == 'vendor', $type);
+				$f = $this->resolver->getFilePath($vpath, $mode, $type);
 		}
 		return $this->getFileInfo($f);
 	}
@@ -118,7 +122,7 @@ class CompassProcess {
 			return true;
 		}
 		
-		$isVendor = $mode == 'vendor';
+		$isVendor = $mode == self::MODE_VENDOR;
 		
 		$vpath = ltrim($vpath,'/');
 		switch($type){
@@ -142,7 +146,7 @@ class CompassProcess {
 	 * @param string $mode
 	 */
 	protected function getUrl($path, $type, $mode){
-		return preg_replace('#((^/)|(^[a-zA-Z0-9_]+:/))?/+#','$1/', $this->resolver->getUrl($path, $mode == 'vendor', $type));
+		return preg_replace('#((^/)|(^[a-zA-Z0-9_]+:/))?/+#','$1/', $this->resolver->getUrl($path, $mode, $type));
 	}
 	
 	/**

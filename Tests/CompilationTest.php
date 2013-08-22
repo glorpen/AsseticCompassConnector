@@ -1,6 +1,8 @@
 <?php
 namespace Glorpen\Assetic\CompassConnectorFilter\Tests;
 
+use Assetic\Exception\FilterException;
+
 use Assetic\Asset\FileAsset;
 
 use Glorpen\Assetic\CompassConnectorFilter\Resolver\SimpleResolver;
@@ -65,6 +67,8 @@ class CompilationTest extends \PHPUnit_Framework_TestCase {
 		$this->assertContains("vendor-generated-image: url('/generated/1x1.png'", $out);
 		$this->assertContains("generated-image-busted: url('/generated/1x1.png?1370450255'", $out);
 		$this->assertContains("generated-image: url('/generated/1x1.png'", $out);
+		$this->assertContains("abs-image-url: url('/images/image.png?", $out);
+		$this->assertContains("width-abs: 10px;", $out);
 	}
 	
 	public function testSprites(){
@@ -82,7 +86,10 @@ class CompilationTest extends \PHPUnit_Framework_TestCase {
 		$css = $this->getAssetCollection('test_zurb.scss', array('zurb-foundation'=>'>0'));
 		$this->assertContains('body', $css->dump(), 'Plugin with version');
 		
-		$css = $this->getAssetCollection('test_zurb.scss', array('zurb-foundation'=>'>999'));
-		$this->assertNotContains('body', $css->dump(), 'Plugin with non existing version');
+		try{
+			$css = $this->getAssetCollection('test_zurb.scss', array('zurb-foundation'=>'>999'));
+			$css->dump();
+			$this->fail('Plugin with non existing version');
+		} catch (FilterException $e){}
 	}
 }

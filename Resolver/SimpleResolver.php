@@ -1,12 +1,19 @@
 <?php
 namespace Glorpen\Assetic\CompassConnectorFilter\Resolver;
 
+use Glorpen\Assetic\CompassConnectorFilter\CompassProcess;
+
 use Symfony\Component\Finder\Finder;
 
 use Assetic\Asset\FileAsset;
 
 use Assetic\Asset\GlobAsset;
 
+/**
+ * An example class implementing custom Resolver.
+ * @author Arkadiusz Dzięgiel
+ *
+ */
 class SimpleResolver implements ResolverInterface {
 
 	protected $appPrefix = '/the-app';
@@ -60,7 +67,8 @@ class SimpleResolver implements ResolverInterface {
 		return $ret;
 	}
 	
-	public function getUrl($vpath, $isVendor, $type){
+	public function getUrl($vpath, $mode, $type){
+		$isVendor = $mode == CompassProcess::MODE_VENDOR;
 		if($type == "generated_image"){
 			$path = $this->generatedPrefix."/";
 		} else {
@@ -73,7 +81,9 @@ class SimpleResolver implements ResolverInterface {
 		return "{$path}{$vpath}";
 	}
 	
-	public function getFilePath($vpath, $isVendor, $type){
+	public function getFilePath($vpath, $mode, $type){
+		//handles absolute urls in same way as app urls
+		$isVendor = $mode == CompassProcess::MODE_VENDOR;
 		if($isVendor){
 			$parts = array($this->vendorDir, $this->{"vendor".ucfirst($type)."sDir"});
 		} else {

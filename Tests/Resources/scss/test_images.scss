@@ -9,5 +9,7 @@ images {
     vendor-generated-image-busted: generated-image-url("1x1.png", true);
     vendor-generated-image: generated-image-url("1x1.png", false);
     generated-image-busted: generated-image-url("@1x1.png", true);
-    generated-image: generated-image-url("@1x1.png", false); 
+    generated-image: generated-image-url("@1x1.png", false);
+    abs-image-url: image-url("/images/image.png");
+    width-abs: image-width("/images/image.png"); 
 }
