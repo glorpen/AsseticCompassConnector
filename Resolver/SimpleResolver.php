@@ -22,7 +22,6 @@ class SimpleResolver implements ResolverInterface {
 	
 	protected $vendorFontsDir = 'fonts';
 	protected $vendorImagesDir = 'images';
-	protected $vendorSpritesDir = 'images';
 	protected $generatedDir = 'generated-images';
 	
 	protected $assetsDir = 'assets';

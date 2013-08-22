@@ -28,6 +28,12 @@ class CompassProcess {
 	const MODE_APP = 'app';
 	const MODE_ABSOLUTE = 'absolute';
 	
+	const TYPE_GENERATED_IMAGE = 'generated_image';
+	const TYPE_OUT_CSS = 'out_css';
+	const TYPE_IMAGE = 'image';
+	const TYPE_FONT = 'font';
+	const TYPE_CSS = 'css';
+	
 	public function __construct($cmd, ResolverInterface $resolver, $cwd, array $env = null, $input = null){
 		$this->initialInput = $input;
 		$this->cwd = $cwd;
@@ -163,7 +169,7 @@ class CompassProcess {
 	 * @param unknown $mode
 	 */
 	protected function findSpritesMatching($path, $mode){
-		return $this->resolver->listVPaths($path, $mode=='vendor');
+		return $this->resolver->listVPaths($path, $mode==self::MODE_VENDOR);
 	}
 	
 	public function getOutput(){
