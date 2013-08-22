@@ -20,6 +20,7 @@ class CompilationTest extends \PHPUnit_Framework_TestCase {
 				implode(DIRECTORY_SEPARATOR,array(__DIR__,'Resources')),
 				implode(DIRECTORY_SEPARATOR,array(__DIR__,'Resources','out'))
 		);
+		$resolver->setAppPrefix('http://example.com/');
 		
 		$f = new Filter($resolver, __DIR__.DIRECTORY_SEPARATOR.'cache', '/home/arkus/.gem/ruby/1.9.1/bin/compass');
 		$f->setPlugins($plugins);
@@ -46,9 +47,9 @@ class CompilationTest extends \PHPUnit_Framework_TestCase {
 		$css = $this->getAssetCollection('test_fonts.scss');
 		$out = $css->dump();
 		
-		$this->assertContains('/vendor/fonts/this.eot', $out);
-		$this->assertContains('/the-app/fonts/this.eot', $out);
-		$this->assertContains("'/this.eot'", $out);
+		$this->assertContains('http://example.com/vendor/fonts/this.eot', $out);
+		$this->assertContains('http://example.com/fonts/this.eot', $out);
+		$this->assertContains("'http://example.com/this-abs.eot'", $out);
 		
 		$this->assertContains("app-inline-font: url('data:font/truetype;base64", $out);
 		$this->assertContains("vendor-inline-font: url('data:font/truetype;base64", $out);
@@ -58,16 +59,16 @@ class CompilationTest extends \PHPUnit_Framework_TestCase {
 		$css = $this->getAssetCollection('test_images.scss');
 		$out = $css->dump();
 		
-		$this->assertContains("'/vendor/images/vendor_1x1.png?1370450255'", $out);
-		$this->assertContains("'/the-app/images/image.png?1370450255'", $out);
+		$this->assertContains("'http://example.com/vendor/images/vendor_1x1.png?1370450255'", $out);
+		$this->assertContains("'http://example.com/images/image.png?1370450255'", $out);
 		$this->assertContains('width-app: 10px;', $out);
 		$this->assertContains('width-vendor: 10px;', $out);
 		$this->assertContains("image-inline: url('data:image/png;base64,", $out);
-		$this->assertContains("vendor-generated-image-busted: url('/generated/1x1.png?1370450255'", $out);
-		$this->assertContains("vendor-generated-image: url('/generated/1x1.png'", $out);
-		$this->assertContains("generated-image-busted: url('/generated/1x1.png?1370450255'", $out);
-		$this->assertContains("generated-image: url('/generated/1x1.png'", $out);
-		$this->assertContains("abs-image-url: url('/images/image.png?", $out);
+		$this->assertContains("vendor-generated-image-busted: url('http://example.com/generated/1x1.png?1370450255'", $out);
+		$this->assertContains("vendor-generated-image: url('http://example.com/generated/1x1.png'", $out);
+		$this->assertContains("generated-image-busted: url('http://example.com/generated/1x1.png?1370450255'", $out);
+		$this->assertContains("generated-image: url('http://example.com/generated/1x1.png'", $out);
+		$this->assertContains("abs-image-url: url('http://example.com/images/image.png?", $out);
 		$this->assertContains("width-abs: 10px;", $out);
 	}
 	
@@ -75,8 +76,8 @@ class CompilationTest extends \PHPUnit_Framework_TestCase {
 		$css = $this->getAssetCollection('test_sprites.scss');
 		$out = $css->dump();
 		
-		$this->assertContains('/generated/sprites/something-sb55c0df6d7.png', $out);
-		$this->assertContains('/generated/vendor-something-s51c948a8c3.png', $out);
+		$this->assertContains('http://example.com/generated/sprites/something-sb55c0df6d7.png', $out);
+		$this->assertContains('http://example.com/generated/vendor-something-s51c948a8c3.png', $out);
 	}
 	
 	public function testPluginsRequiring(){

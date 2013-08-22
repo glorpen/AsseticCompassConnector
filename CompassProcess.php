@@ -160,7 +160,7 @@ class CompassProcess {
 	 * @return number
 	 */
 	protected function getApiVersion(){
-		return 2;
+		return 3;
 	}
 	
 	/**

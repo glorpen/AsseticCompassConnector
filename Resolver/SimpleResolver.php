@@ -16,8 +16,8 @@ use Assetic\Asset\GlobAsset;
  */
 class SimpleResolver implements ResolverInterface {
 
-	protected $appPrefix = '/the-app';
-	protected $vendorPrefix = '/vendor'; //TODO: przenieść do pythonowego exampla
+	protected $appPrefix = '/';
+	protected $vendorPrefix = '/vendor';
 	protected $generatedPrefix = '/generated';
 	
 	protected $vendorFontsDir = 'fonts';
@@ -74,10 +74,11 @@ class SimpleResolver implements ResolverInterface {
 			if($isVendor){
 				$path = $this->vendorPrefix."/".$this->{"vendor".ucfirst($type)."sDir"}."/";
 			} else {
-				$path = $this->appPrefix."/";
+				$path = "/";
 			}
 		}
-		return "{$path}{$vpath}";
+		
+		return $this->appPrefix."{$path}{$vpath}";
 	}
 	
 	public function getFilePath($vpath, $mode, $type){

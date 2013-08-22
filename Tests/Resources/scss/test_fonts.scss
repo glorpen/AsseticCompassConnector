@@ -8,7 +8,7 @@ font-face-app {
     @include font-face("this name", font-files("@fonts/this.woff", woff, "@fonts/this.otf", opentype), "@fonts/this.eot");
 }
 font-face-absolute {
-  @include font-face("this name", font-files("/this.woff", woff, "/this.otf", opentype), "/this.eot");
+  @include font-face("this name", font-files("/this-abs.woff", woff, "/this-abs.otf", opentype), "/this-abs.eot");
 }
 
 font-inline-vendor {
