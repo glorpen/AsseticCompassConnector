@@ -169,7 +169,7 @@ class CompassProcess {
 	 * @param unknown $mode
 	 */
 	protected function findSpritesMatching($path, $mode){
-		return $this->resolver->listVPaths($path, $mode==self::MODE_VENDOR);
+		return $this->resolver->listVPaths($path, $mode);
 	}
 	
 	public function getOutput(){

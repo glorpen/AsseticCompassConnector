@@ -44,11 +44,13 @@ class SimpleResolver implements ResolverInterface {
 		$this->vendorDir = $dir;
 	}
 	
-	public function listVPaths($vpath, $isVendor){
-		if($isVendor){
+	public function listVPaths($vpath, $mode){
+		if($mode == CompassProcess::MODE_VENDOR){
 			$parts = array($this->sourceDir, $this->vendorDir, $this->vendorImagesDir);
+			$isVendor = true;
 		} else {
 			$parts = array($this->sourceDir, $this->assetsDir);
+			$isVendor = false;
 		}
 		
 		list($pre, $post) = explode('*', $vpath, 2);
