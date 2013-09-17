@@ -23,6 +23,7 @@ class CompassProcess {
 	private $touchedFiles;
 	
 	protected $errorOutput, $commandOutput, $apiRequests, $exitStatus;
+	private $processWait = 3000;
 	
 	const MODE_VENDOR = 'vendor';
 	const MODE_APP = 'app';
@@ -313,15 +314,22 @@ class CompassProcess {
 			}
 		}
 		
-		$info = proc_get_status($this->process);
-		if (!$info['running']) {
-			$exitcode = $info['exitcode'];
-			
-			if($exitcode != 0){
-				throw new FilterException("Process exited with {$exitcode}\nOutput:\n{$this->commandOutput}\nError output:\n{$this->errorOutput}\nApi requests:\n{$this->apiRequests}");
-			}
-		} else {
-			throw new RuntimeException("Process was still running");
+		$totalWait = 0;
+		do {
+				$info = proc_get_status($this->process);
+				if (!$info['running']) {
+						$exitcode = $info['exitcode'];
+
+						if($exitcode != 0){
+								throw new FilterException("Process exited with {$exitcode}\nOutput:\n{$this->commandOutput}\nError output:\n{$this->errorOutput}\nApi requests:\n{$this->apiRequests}");
+						}
+				}
+				usleep(200);
+				$totalWait += 200;
+		} while (($info['running']) && ($totalWait < $this->processWait));
+
+		if ($info['running']) {
+				throw new RuntimeException("Process was still running");
 		}
 	}
 }
