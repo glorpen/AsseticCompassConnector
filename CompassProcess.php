@@ -274,7 +274,8 @@ class CompassProcess {
 			$w = null;
 			$e = null;
 			
-			$n = @stream_select($r, $w, $e, 3);
+			if(empty($readPipes)) break;
+			$n = stream_select($r, $w, $e, null, null);
 			
 			if (false === $n) break;
 			if ($n === 0) {
@@ -314,14 +315,10 @@ class CompassProcess {
 		}
 		
 		$info = proc_get_status($this->process);
-		if (!$info['running']) {
-			$exitcode = $info['exitcode'];
-			
-			if($exitcode != 0){
-				throw new FilterException("Process exited with {$exitcode}\nOutput:\n{$this->commandOutput}\nError output:\n{$this->errorOutput}\nApi requests:\n{$this->apiRequests}");
-			}
-		} else {
-			throw new RuntimeException("Process was still running");
+		$exitcode = $info['exitcode'];
+		
+		if($exitcode != 0){
+			throw new FilterException("Process exited with {$exitcode}\nOutput:\n{$this->commandOutput}\nError output:\n{$this->errorOutput}\nApi requests:\n{$this->apiRequests}");
 		}
 	}
 }
