@@ -317,7 +317,7 @@ class CompassProcess {
 		$info = proc_get_status($this->process);
 		$exitcode = $info['exitcode'];
 		
-		if($exitcode != 0){
+		if($exitcode != -1 && $exitcode != 0){
 			throw new FilterException("Process exited with {$exitcode}\nOutput:\n{$this->commandOutput}\nError output:\n{$this->errorOutput}\nApi requests:\n{$this->apiRequests}");
 		}
 	}
