@@ -21,6 +21,7 @@ class Filter extends BaseProcessFilter implements DependencyExtractorInterface, 
 	
 	protected $resolver, $compassPath, $rubyPath, $cacheDir;
 	protected $plugins = array();
+	protected $imports = array();
 	
 	private $children = null;
 	private $hashable=array();
@@ -61,6 +62,7 @@ class Filter extends BaseProcessFilter implements DependencyExtractorInterface, 
 		
 		$compassProc = CompassProcess::fromProcess($pb->getProcess(), $this->resolver);
 		$compassProc->setPlugins($this->plugins);
+		$compassProc->setImports($this->imports);
 		$compassProc->run();
 		
 		$this->children = $compassProc->getTouchedFiles();
@@ -106,6 +108,13 @@ class Filter extends BaseProcessFilter implements DependencyExtractorInterface, 
 	
 	public function setPlugins(array $plugins){
 		$this->plugins = $plugins;
+	}
+	
+	public function setImports(array $imports = array()){
+		$this->imports = $imports;
+	}
+	public function addImport($import){
+		$this->imports[] = $import;
 	}
 	
 	public function hash(){
