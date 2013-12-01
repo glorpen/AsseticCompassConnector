@@ -91,6 +91,7 @@ You can compile assets as in any Assetic filter:
       
       $f = new Filter($resolver, 'path/to/cache', 'path/to/compass/bin');
       $f->setPlugins(array("zurb-foundation")); //or array("zurb-foundation"=>">4")
+      $f->addImport('/path/to/some/scss/dir'); //and then @import "scss_in_some_dir";
       
       $css = new AssetCollection(array(
             new FileAsset('path/to/file.scss'),
